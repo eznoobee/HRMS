@@ -1,5 +1,8 @@
 using HRMS.Application.Common.Models;
 using HRMS.Application.DTOs;
+using HRMS.Application.Features.Employees.Commands.CreateEmployee;
+using HRMS.Application.Features.Employees.Commands.DeleteEmployee;
+using HRMS.Application.Features.Employees.Commands.UpdateEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployees;
 using Microsoft.AspNetCore.Authorization;
@@ -27,4 +30,49 @@ public class EmployeesController : BaseApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct) =>
         ToResponse(await Sender.Send(new GetEmployeeQuery(id), ct));
+
+    [HttpPost]
+    [ProducesResponseType(typeof(CreateEmployeeResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand command, CancellationToken ct) =>
+        ToResponse(await Sender.Send(command, ct));
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(UpdateEmployeeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEmployeeRequest request, CancellationToken ct) =>
+        ToResponse(await Sender.Send(new UpdateEmployeeCommand(
+            id,
+            request.FirstName,
+            request.LastName,
+            request.Phone,
+            request.AvatarUrl,
+            request.DateOfBirth,
+            request.JoinDate,
+            request.JobTitle,
+            request.Role,
+            request.DepartmentId,
+            request.IsActive), ct));
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(typeof(DeleteEmployeeResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken ct) =>
+        ToResponse(await Sender.Send(new DeleteEmployeeCommand(id), ct));
+
+    public record UpdateEmployeeRequest(
+        string FirstName,
+        string LastName,
+        string? Phone,
+        string? AvatarUrl,
+        DateOnly DateOfBirth,
+        DateOnly JoinDate,
+        string? JobTitle,
+        HRMS.Domain.Enums.UserRole Role,
+        Guid DepartmentId,
+        bool IsActive);
 }

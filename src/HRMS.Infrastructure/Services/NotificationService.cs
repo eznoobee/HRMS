@@ -2,6 +2,7 @@ using HRMS.Domain.Entities;
 using HRMS.Domain.Enums;
 using HRMS.Domain.Interfaces.Services;
 using HRMS.Infrastructure.Data;
+using HRMS.Infrastructure.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,5 +84,3 @@ public class NotificationService(ApplicationDbContext context, IHubContext<Notif
         }
     }
 }
-
-public class NotificationHub : Hub { }

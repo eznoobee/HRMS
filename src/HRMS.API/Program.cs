@@ -4,6 +4,7 @@ using HRMS.API.Hubs;
 using HRMS.API.Middleware;
 using HRMS.Application;
 using HRMS.Infrastructure;
+using HRMS.Infrastructure.Hubs;
 using HRMS.Infrastructure.Services;
 using Microsoft.AspNetCore.RateLimiting;
 
