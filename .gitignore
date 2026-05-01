@@ -1,0 +1,24 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+_ReSharper*/
+*.DotSettings.user
+
+## Secrets / local config
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+
+## Build output
+publish/
+*.nupkg
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Claude Code
+.claude/
