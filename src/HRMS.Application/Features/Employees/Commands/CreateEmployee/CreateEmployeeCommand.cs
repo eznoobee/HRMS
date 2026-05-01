@@ -6,7 +6,9 @@ namespace HRMS.Application.Features.Employees.Commands.CreateEmployee;
 
 public record CreateEmployeeCommand(
     string FirstName,
-    string LastName,
+    string FatherName,
+    string GrandfatherName,
+    string FamilyName,
     string Email,
     string Password,
     string? Phone,

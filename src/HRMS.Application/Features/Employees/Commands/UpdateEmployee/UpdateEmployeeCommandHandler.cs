@@ -4,6 +4,7 @@ using HRMS.Domain.Entities;
 using HRMS.Domain.Enums;
 using HRMS.Domain.Interfaces.Repositories;
 using HRMS.Domain.Interfaces.Services;
+using HRMS.Domain.ValueObjects;
 using MediatR;
 
 namespace HRMS.Application.Features.Employees.Commands.UpdateEmployee;
@@ -47,8 +48,10 @@ public class UpdateEmployeeCommandHandler(
         }
 
         employee.FirstName = request.FirstName;
-        employee.LastName = request.LastName;
-        employee.Phone = request.Phone;
+        employee.FatherName = request.FatherName;
+        employee.GrandfatherName = request.GrandfatherName;
+        employee.FamilyName = request.FamilyName;
+        employee.Phone = PhoneNumber.TryCreate(request.Phone);
         employee.AvatarUrl = request.AvatarUrl;
         employee.DateOfBirth = request.DateOfBirth;
         employee.JobTitle = request.JobTitle;
@@ -59,6 +62,8 @@ public class UpdateEmployeeCommandHandler(
         await unitOfWork.SaveChangesAsync(ct);
 
         return Result<UpdateEmployeeResponse>.Success(
-            new UpdateEmployeeResponse(employee.Id, $"{employee.FirstName} {employee.LastName}"));
+            new UpdateEmployeeResponse(
+                employee.Id,
+                $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"));
     }
 }

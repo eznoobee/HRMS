@@ -7,7 +7,9 @@ namespace HRMS.Application.Features.Employees.Commands.UpdateEmployee;
 public record UpdateEmployeeCommand(
     Guid EmployeeId,
     string FirstName,
-    string LastName,
+    string FatherName,
+    string GrandfatherName,
+    string FamilyName,
     string? Phone,
     string? AvatarUrl,
     DateOnly DateOfBirth,

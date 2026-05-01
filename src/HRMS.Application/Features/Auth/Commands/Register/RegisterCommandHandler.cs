@@ -5,6 +5,7 @@ using HRMS.Domain.Entities;
 using HRMS.Domain.Enums;
 using HRMS.Domain.Interfaces.Repositories;
 using HRMS.Domain.Interfaces.Services;
+using HRMS.Domain.ValueObjects;
 using MediatR;
 
 namespace HRMS.Application.Features.Auth.Commands.Register;
@@ -42,9 +43,11 @@ public class RegisterCommandHandler(
         var employee = new Employee
         {
             FirstName = request.FirstName,
-            LastName = request.LastName,
+            FatherName = request.FatherName,
+            GrandfatherName = request.GrandfatherName,
+            FamilyName = request.FamilyName,
             Email = request.Email,
-            Phone = request.Phone,
+            Phone = PhoneNumber.TryCreate(request.Phone),
             DateOfBirth = request.DateOfBirth,
             JoinDate = request.JoinDate,
             JobTitle = request.JobTitle,
@@ -60,7 +63,10 @@ public class RegisterCommandHandler(
         await unitOfWork.SaveChangesAsync(ct);
 
         return Result<RegisterResponse>.Success(
-            new RegisterResponse(employee.Id, employee.Email, $"{employee.FirstName} {employee.LastName}"),
+            new RegisterResponse(
+                employee.Id,
+                employee.Email,
+                $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"),
             201);
     }
 }

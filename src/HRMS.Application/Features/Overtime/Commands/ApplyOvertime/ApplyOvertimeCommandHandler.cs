@@ -52,7 +52,7 @@ public class ApplyOvertimeCommandHandler(
             await notificationService.SendToManyAsync(
                 hrStaff.Select(e => e.Id),
                 "New Overtime Request",
-                $"{employee.FirstName} {employee.LastName} submitted an overtime request for {totalHours:F1} hour(s).",
+                $"{employee.FirstName} {employee.FamilyName} submitted an overtime request for {totalHours:F1} hour(s).",
                 NotificationType.OvertimeApplied, overtimeRequest.Id, ct: ct);
         }
         else
@@ -66,7 +66,7 @@ public class ApplyOvertimeCommandHandler(
                 await notificationService.SendAsync(
                     manager.Id,
                     "New Overtime Request",
-                    $"{employee.FirstName} {employee.LastName} submitted an overtime request for {totalHours:F1} hour(s).",
+                    $"{employee.FirstName} {employee.FamilyName} submitted an overtime request for {totalHours:F1} hour(s).",
                     NotificationType.OvertimeApplied, overtimeRequest.Id, ct: ct);
             }
         }

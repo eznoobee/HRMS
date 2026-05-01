@@ -68,7 +68,7 @@ public class ApplyLeaveCommandHandler(
             await notificationService.SendToManyAsync(
                 hrEmployees.Select(e => e.Id),
                 "New Leave Request",
-                $"{employee.FirstName} {employee.LastName} has submitted a leave request for {totalDays} day(s).",
+                $"{employee.FirstName} {employee.FamilyName} has submitted a leave request for {totalDays} day(s).",
                 NotificationType.LeaveApplied,
                 leaveRequest.Id,
                 ct: ct);
@@ -84,7 +84,7 @@ public class ApplyLeaveCommandHandler(
                 await notificationService.SendAsync(
                     manager.Id,
                     "New Leave Request",
-                    $"{employee.FirstName} {employee.LastName} has submitted a leave request for {totalDays} day(s).",
+                    $"{employee.FirstName} {employee.FamilyName} has submitted a leave request for {totalDays} day(s).",
                     NotificationType.LeaveApplied,
                     leaveRequest.Id,
                     ct: ct);

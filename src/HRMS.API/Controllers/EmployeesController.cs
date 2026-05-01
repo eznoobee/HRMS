@@ -5,6 +5,7 @@ using HRMS.Application.Features.Employees.Commands.DeleteEmployee;
 using HRMS.Application.Features.Employees.Commands.UpdateEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployees;
+using HRMS.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,7 +48,9 @@ public class EmployeesController : BaseApiController
         ToResponse(await Sender.Send(new UpdateEmployeeCommand(
             id,
             request.FirstName,
-            request.LastName,
+            request.FatherName,
+            request.GrandfatherName,
+            request.FamilyName,
             request.Phone,
             request.AvatarUrl,
             request.DateOfBirth,
@@ -66,13 +69,15 @@ public class EmployeesController : BaseApiController
 
     public record UpdateEmployeeRequest(
         string FirstName,
-        string LastName,
+        string FatherName,
+        string GrandfatherName,
+        string FamilyName,
         string? Phone,
         string? AvatarUrl,
         DateOnly DateOfBirth,
         DateOnly JoinDate,
         string? JobTitle,
-        HRMS.Domain.Enums.UserRole Role,
+        UserRole Role,
         Guid DepartmentId,
         bool IsActive);
 }

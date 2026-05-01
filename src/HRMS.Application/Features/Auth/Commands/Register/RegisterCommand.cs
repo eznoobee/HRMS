@@ -6,10 +6,12 @@ namespace HRMS.Application.Features.Auth.Commands.Register;
 
 public record RegisterCommand(
     string FirstName,
-    string LastName,
+    string FatherName,
+    string GrandfatherName,
+    string FamilyName,
     string Email,
     string Password,
-    string Phone,
+    string? Phone,
     DateOnly DateOfBirth,
     DateOnly JoinDate,
     string? JobTitle,
