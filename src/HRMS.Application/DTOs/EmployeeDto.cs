@@ -3,7 +3,9 @@ namespace HRMS.Application.DTOs;
 public record EmployeeDto(
     Guid Id,
     string FirstName,
-    string LastName,
+    string FatherName,
+    string GrandfatherName,
+    string FamilyName,
     string FullName,
     string Email,
     string? Phone,

@@ -1,14 +1,17 @@
 using HRMS.Domain.Entities.Common;
 using HRMS.Domain.Enums;
+using HRMS.Domain.ValueObjects;
 
 namespace HRMS.Domain.Entities;
 
 public class Employee : AuditableEntity
 {
     public string FirstName { get; set; } = default!;
-    public string LastName { get; set; } = default!;
+    public string FatherName { get; set; } = default!;
+    public string GrandfatherName { get; set; } = default!;
+    public string FamilyName { get; set; } = default!;
     public string Email { get; set; } = default!;
-    public string? Phone { get; set; }
+    public PhoneNumber? Phone { get; set; }
     public string? AvatarUrl { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public DateOnly JoinDate { get; set; }

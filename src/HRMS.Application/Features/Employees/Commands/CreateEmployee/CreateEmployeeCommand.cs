@@ -2,9 +2,9 @@ using HRMS.Application.Common.Models;
 using HRMS.Domain.Enums;
 using MediatR;
 
-namespace HRMS.Application.Features.Auth.Commands.Register;
+namespace HRMS.Application.Features.Employees.Commands.CreateEmployee;
 
-public record RegisterCommand(
+public record CreateEmployeeCommand(
     string FirstName,
     string FatherName,
     string GrandfatherName,
@@ -16,8 +16,7 @@ public record RegisterCommand(
     DateOnly JoinDate,
     string? JobTitle,
     UserRole Role,
-    Guid CompanyId,
     Guid DepartmentId
-) : IRequest<Result<RegisterResponse>>;
+) : IRequest<Result<CreateEmployeeResponse>>;
 
-public record RegisterResponse(Guid EmployeeId, string Email, string FullName);
+public record CreateEmployeeResponse(Guid EmployeeId, string Email, string FullName);

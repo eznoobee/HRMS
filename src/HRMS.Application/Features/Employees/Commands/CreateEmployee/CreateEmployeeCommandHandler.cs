@@ -8,37 +8,38 @@ using HRMS.Domain.Interfaces.Services;
 using HRMS.Domain.ValueObjects;
 using MediatR;
 
-namespace HRMS.Application.Features.Auth.Commands.Register;
+namespace HRMS.Application.Features.Employees.Commands.CreateEmployee;
 
-public class RegisterCommandHandler(
+public class CreateEmployeeCommandHandler(
     IIdentityService identityService,
     IRepository<Employee> employeeRepo,
-    IRepository<Company> companyRepo,
     IRepository<Department> departmentRepo,
     ICurrentUserService currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand, Result<RegisterResponse>>
+    IUnitOfWork unitOfWork) : IRequestHandler<CreateEmployeeCommand, Result<CreateEmployeeResponse>>
 {
-    public async Task<Result<RegisterResponse>> Handle(RegisterCommand request, CancellationToken ct)
+    public async Task<Result<CreateEmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken ct)
     {
-        if (currentUser.Role == UserRole.HRManager && request.Role == UserRole.GeneralManager)
-            throw new ForbiddenException("HRManagers cannot register a GeneralManager.");
+        var isHR = currentUser.Role is UserRole.HR or UserRole.HRManager or UserRole.GeneralManager;
+        if (!isHR)
+            throw new ForbiddenException("Only HR personnel can create employees.");
 
-        var company = await companyRepo.GetByIdAsync(request.CompanyId, ct)
-            ?? throw new NotFoundException(nameof(Company), request.CompanyId);
+        if (currentUser.Role == UserRole.HRManager && request.Role == UserRole.GeneralManager)
+            throw new ForbiddenException("HRManagers cannot create a GeneralManager.");
 
         var department = await departmentRepo.GetByIdAsync(request.DepartmentId, ct)
             ?? throw new NotFoundException(nameof(Department), request.DepartmentId);
 
-        if (department.CompanyId != company.Id)
-            return Result<RegisterResponse>.Failure("Department does not belong to this company.");
+        if (department.CompanyId != currentUser.CompanyId)
+            return Result<CreateEmployeeResponse>.Failure("Department does not belong to your company.");
 
         var emailExists = await employeeRepo.ExistsAsync(e => e.Email == request.Email, ct);
         if (emailExists)
-            return Result<RegisterResponse>.Failure("An account with this email already exists.");
+            return Result<CreateEmployeeResponse>.Failure("An employee with this email already exists.");
 
-        var (userId, error) = await identityService.CreateUserAsync(request.Email, request.Password, request.Role.ToString());
+        var (userId, error) = await identityService.CreateUserAsync(
+            request.Email, request.Password, request.Role.ToString());
         if (error is not null)
-            return Result<RegisterResponse>.Failure(error);
+            return Result<CreateEmployeeResponse>.Failure(error);
 
         var employee = new Employee
         {
@@ -52,18 +53,18 @@ public class RegisterCommandHandler(
             JoinDate = request.JoinDate,
             JobTitle = request.JobTitle,
             Role = request.Role,
-            CompanyId = request.CompanyId,
+            CompanyId = currentUser.CompanyId,
             DepartmentId = request.DepartmentId,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = Guid.Empty
+            CreatedBy = currentUser.EmployeeId
         };
 
         await employeeRepo.AddAsync(employee, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result<RegisterResponse>.Success(
-            new RegisterResponse(
+        return Result<CreateEmployeeResponse>.Success(
+            new CreateEmployeeResponse(
                 employee.Id,
                 employee.Email,
                 $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"),
