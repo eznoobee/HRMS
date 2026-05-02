@@ -54,28 +54,4 @@ public class TokenService(IConfiguration configuration) : ITokenService
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
         return Convert.ToBase64String(bytes);
     }
-
-    public string? GetUserIdFromExpiredToken(string token)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
-        var validationParams = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = key,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false
-        };
-
-        try
-        {
-            var principal = new JwtSecurityTokenHandler()
-                .ValidateToken(token, validationParams, out _);
-            return principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        }
-        catch
-        {
-            return null;
-        }
-    }
 }

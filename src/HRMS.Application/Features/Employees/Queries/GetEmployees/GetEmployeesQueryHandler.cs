@@ -21,7 +21,7 @@ public class GetEmployeesQueryHandler(
 
         var query = employeeRepo.Query()
             .Include(e => e.Department)
-            .Where(e => e.CompanyId == currentUser.CompanyId && !e.IsDeleted);
+            .Where(e => e.CompanyId == currentUser.CompanyId);
 
         // Managers can only see their own department
         if (isManager && !isHR)

@@ -44,7 +44,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, Applic
         var employee = context.Employees
             .Include(e => e.GrantedPermissions)
             .AsNoTracking()
-            .FirstOrDefault(e => e.UserId == UserId && !e.IsDeleted);
+            .FirstOrDefault(e => e.UserId == UserId);
 
         httpContext.Items[CacheKey] = employee;
         return employee;

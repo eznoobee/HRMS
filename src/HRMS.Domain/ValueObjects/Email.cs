@@ -19,19 +19,5 @@ public sealed record Email
         return new Email(normalized);
     }
 
-    public static Email? TryCreate(string? raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw)) return null;
-        try { return Create(raw); }
-        catch { return null; }
-    }
-
-    public static bool IsValid(string? raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw)) return false;
-        try { Create(raw); return true; }
-        catch { return false; }
-    }
-
     public override string ToString() => Value;
 }

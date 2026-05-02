@@ -24,7 +24,7 @@ public class GetLeaveRequestsQueryHandler(
             .Include(lr => lr.LeaveType)
             .Include(lr => lr.ManagerReviewer)
             .Include(lr => lr.HRReviewer)
-            .Where(lr => !lr.IsDeleted && lr.Employee.CompanyId == currentUser.CompanyId);
+            .Where(lr => lr.Employee.CompanyId == currentUser.CompanyId);
 
         // Employees see only their own; managers see their dept; HR sees all
         if (!isHR && !isManager)

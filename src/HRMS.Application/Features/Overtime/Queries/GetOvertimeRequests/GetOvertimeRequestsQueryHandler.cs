@@ -23,8 +23,7 @@ public class GetOvertimeRequestsQueryHandler(
         var query = overtimeRepo.Query()
             .Include(o => o.Employee)
             .Include(o => o.ManagerReviewer)
-            .Include(o => o.HRReviewer)
-            .Where(o => !o.IsDeleted);
+            .Include(o => o.HRReviewer);
 
         if (isHR)
         {
