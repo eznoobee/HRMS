@@ -18,6 +18,4 @@ public record RegisterCommand(
     UserRole Role,
     Guid CompanyId,
     Guid DepartmentId
-) : IRequest<Result<RegisterResponse>>;
-
-public record RegisterResponse(Guid EmployeeId, string Email, string FullName);
+) : IRequest<Result>;

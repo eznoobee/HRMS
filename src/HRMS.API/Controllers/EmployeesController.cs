@@ -3,6 +3,8 @@ using HRMS.Application.DTOs;
 using HRMS.Application.Features.Employees.Commands.CreateEmployee;
 using HRMS.Application.Features.Employees.Commands.DeleteEmployee;
 using HRMS.Application.Features.Employees.Commands.UpdateEmployee;
+using HRMS.Application.Features.Employees.Commands.UpdateHRPermissions;
+using HRMS.Domain.Enums;
 using HRMS.Application.Features.Employees.Queries.GetEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployees;
 using HRMS.Domain.Enums;
@@ -33,7 +35,7 @@ public class EmployeesController : BaseApiController
         ToResponse(await Sender.Send(new GetEmployeeQuery(id), ct));
 
     [HttpPost]
-    [ProducesResponseType(typeof(CreateEmployeeResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand command, CancellationToken ct) =>
@@ -66,6 +68,16 @@ public class EmployeesController : BaseApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct) =>
         ToResponse(await Sender.Send(new DeleteEmployeeCommand(id), ct));
+
+    [HttpPatch("{id:guid}/permissions")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdatePermissions(
+        Guid id, [FromBody] UpdatePermissionsRequest request, CancellationToken ct) =>
+        ToResponse(await Sender.Send(new UpdateHRPermissionsCommand(id, request.Permissions), ct));
+
+    public record UpdatePermissionsRequest(IReadOnlyList<HRPermission> Permissions);
 
     public record UpdateEmployeeRequest(
         string FirstName,

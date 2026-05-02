@@ -25,7 +25,7 @@ public class GetEmployeesQueryHandler(
 
         // Managers can only see their own department
         if (isManager && !isHR)
-            query = query.Where(e => e.DepartmentId == currentUser.CompanyId);
+            query = query.Where(e => e.DepartmentId == currentUser.DepartmentId);
 
         if (request.DepartmentId.HasValue)
             query = query.Where(e => e.DepartmentId == request.DepartmentId);
@@ -38,13 +38,13 @@ public class GetEmployeesQueryHandler(
             var search = request.Search.ToLower();
             query = query.Where(e =>
                 e.FirstName.ToLower().Contains(search) ||
-                e.LastName.ToLower().Contains(search) ||
-                e.Email.ToLower().Contains(search));
+                e.FamilyName.ToLower().Contains(search) ||
+                e.Email.Value.ToLower().Contains(search));
         }
 
         var totalCount = await query.CountAsync(ct);
         var items = await query
-            .OrderBy(e => e.FirstName).ThenBy(e => e.LastName)
+            .OrderBy(e => e.FirstName).ThenBy(e => e.FamilyName)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .ProjectToType<EmployeeDto>()

@@ -9,5 +9,7 @@ public interface ICurrentUserService
     UserRole Role { get; }
     Guid EmployeeId { get; }
     Guid CompanyId { get; }
+    Guid DepartmentId { get; }
+    bool HasPermission(HRPermission permission);
     bool IsAuthenticated { get; }
 }

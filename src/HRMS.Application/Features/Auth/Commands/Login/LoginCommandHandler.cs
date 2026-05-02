@@ -27,7 +27,7 @@ public class LoginCommandHandler(
         if (employee is null || !employee.IsActive)
             return Result<LoginResponse>.Failure("Account is inactive or not found.", 401);
 
-        var accessToken = tokenService.GenerateAccessToken(userId, employee.Email, employee.Role.ToString());
+        var accessToken = tokenService.GenerateAccessToken(userId, employee.Email.Value, employee.Role.ToString());
         var rawRefreshToken = tokenService.GenerateRefreshToken();
 
         var refreshToken = new RefreshTokenEntity
@@ -45,10 +45,6 @@ public class LoginCommandHandler(
         return Result<LoginResponse>.Success(new LoginResponse(
             accessToken,
             rawRefreshToken,
-            DateTime.UtcNow.AddMinutes(15),
-            employee.Id,
-            $"{employee.FirstName} {employee.LastName}",
-            employee.Email,
-            employee.Role.ToString()));
+            DateTime.UtcNow.AddMinutes(15)));
     }
 }

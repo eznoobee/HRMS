@@ -15,9 +15,9 @@ public class CreateEmployeeCommandHandler(
     IRepository<Employee> employeeRepo,
     IRepository<Department> departmentRepo,
     ICurrentUserService currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<CreateEmployeeCommand, Result<CreateEmployeeResponse>>
+    IUnitOfWork unitOfWork) : IRequestHandler<CreateEmployeeCommand, Result>
 {
-    public async Task<Result<CreateEmployeeResponse>> Handle(CreateEmployeeCommand request, CancellationToken ct)
+    public async Task<Result> Handle(CreateEmployeeCommand request, CancellationToken ct)
     {
         var isHR = currentUser.Role is UserRole.HR or UserRole.HRManager or UserRole.GeneralManager;
         if (!isHR)
@@ -30,16 +30,16 @@ public class CreateEmployeeCommandHandler(
             ?? throw new NotFoundException(nameof(Department), request.DepartmentId);
 
         if (department.CompanyId != currentUser.CompanyId)
-            return Result<CreateEmployeeResponse>.Failure("Department does not belong to your company.");
+            return Result.Failure("Department does not belong to your company.");
 
-        var emailExists = await employeeRepo.ExistsAsync(e => e.Email == request.Email, ct);
+        var emailExists = await employeeRepo.ExistsAsync(e => e.Email.Value == request.Email.ToLowerInvariant(), ct);
         if (emailExists)
-            return Result<CreateEmployeeResponse>.Failure("An employee with this email already exists.");
+            return Result.Failure("An employee with this email already exists.");
 
         var (userId, error) = await identityService.CreateUserAsync(
             request.Email, request.Password, request.Role.ToString());
         if (error is not null)
-            return Result<CreateEmployeeResponse>.Failure(error);
+            return Result.Failure(error);
 
         var employee = new Employee
         {
@@ -47,7 +47,7 @@ public class CreateEmployeeCommandHandler(
             FatherName = request.FatherName,
             GrandfatherName = request.GrandfatherName,
             FamilyName = request.FamilyName,
-            Email = request.Email,
+            Email = Email.Create(request.Email),
             Phone = PhoneNumber.TryCreate(request.Phone),
             DateOfBirth = request.DateOfBirth,
             JoinDate = request.JoinDate,
@@ -63,11 +63,6 @@ public class CreateEmployeeCommandHandler(
         await employeeRepo.AddAsync(employee, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result<CreateEmployeeResponse>.Success(
-            new CreateEmployeeResponse(
-                employee.Id,
-                employee.Email,
-                $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"),
-            201);
+        return Result.Success(201);
     }
 }

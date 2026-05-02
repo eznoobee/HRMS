@@ -52,15 +52,11 @@ public class RefreshTokenCommandHandler(
         await unitOfWork.SaveChangesAsync(ct);
 
         var accessToken = tokenService.GenerateAccessToken(
-            stored.UserId, employee.Email, employee.Role.ToString());
+            stored.UserId, employee.Email.Value, employee.Role.ToString());
 
         return Result<LoginResponse>.Success(new LoginResponse(
             accessToken,
             rawNewRefresh,
-            DateTime.UtcNow.AddMinutes(15),
-            employee.Id,
-            $"{employee.FirstName} {employee.LastName}",
-            employee.Email,
-            employee.Role.ToString()));
+            DateTime.UtcNow.AddMinutes(15)));
     }
 }
