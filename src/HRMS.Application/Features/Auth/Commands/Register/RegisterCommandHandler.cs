@@ -63,7 +63,7 @@ public class RegisterCommandHandler(
             DepartmentId = request.DepartmentId,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            CreatedBy = Guid.Empty
+            CreatedBy = currentUser.EmployeeId
         };
 
         await employeeRepo.AddAsync(employee, ct);

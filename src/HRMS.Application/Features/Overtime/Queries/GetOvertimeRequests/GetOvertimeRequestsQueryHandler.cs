@@ -42,7 +42,7 @@ public class GetOvertimeRequestsQueryHandler(
             query = query.Where(o => o.EmployeeId == currentUser.EmployeeId);
         }
 
-        if (request.EmployeeId.HasValue)
+        if (request.EmployeeId.HasValue && (isHR || isManager))
             query = query.Where(o => o.EmployeeId == request.EmployeeId);
 
         if (!string.IsNullOrWhiteSpace(request.Status) &&

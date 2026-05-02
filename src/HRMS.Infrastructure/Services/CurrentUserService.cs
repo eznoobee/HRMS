@@ -5,7 +5,6 @@ using HRMS.Domain.Interfaces.Services;
 using HRMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Infrastructure.Services;
 

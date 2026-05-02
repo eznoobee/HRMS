@@ -19,7 +19,7 @@ public class GetEmployeeQueryHandler(
     {
         var employee = await employeeRepo.Query()
             .Include(e => e.Department)
-            .FirstOrDefaultAsync(e => e.Id == request.EmployeeId, ct)
+            .FirstOrDefaultAsync(e => e.Id == request.EmployeeId && !e.IsDeleted, ct)
             ?? throw new NotFoundException(nameof(Employee), request.EmployeeId);
 
         // Employees can only view their own profile; HR and above can view any

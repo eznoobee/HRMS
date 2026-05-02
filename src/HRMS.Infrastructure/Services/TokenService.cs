@@ -15,6 +15,10 @@ public class TokenService(IConfiguration configuration) : ITokenService
     private readonly string _issuer = configuration["Jwt:Issuer"] ?? "HRMS";
     private readonly string _audience = configuration["Jwt:Audience"] ?? "HRMS";
     private readonly int _expiryMinutes = int.Parse(configuration["Jwt:ExpiryMinutes"] ?? "60");
+    private readonly int _refreshTokenExpiryDays = int.Parse(configuration["Jwt:RefreshTokenExpiryDays"] ?? "7");
+
+    public int AccessTokenExpiryMinutes => _expiryMinutes;
+    public int RefreshTokenExpiryDays => _refreshTokenExpiryDays;
 
     public string GenerateAccessToken(string userId, string email, string role)
     {

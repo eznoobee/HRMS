@@ -66,20 +66,23 @@ public class NotificationService(ApplicationDbContext context, IHubContext<Notif
         context.Notifications.AddRange(notifications);
         await context.SaveChangesAsync(ct);
 
-        var userIds = await context.Employees.AsNoTracking()
+        var employeeUserMap = await context.Employees.AsNoTracking()
             .Where(e => ids.Contains(e.Id))
-            .Select(e => e.UserId)
+            .Select(e => new { e.Id, e.UserId })
             .ToListAsync(ct);
 
-        foreach (var userId in userIds)
+        foreach (var mapping in employeeUserMap)
         {
-            await hubContext.Clients.User(userId).SendAsync("ReceiveNotification", new
+            var notification = notifications.First(n => n.EmployeeId == mapping.Id);
+            await hubContext.Clients.User(mapping.UserId).SendAsync("ReceiveNotification", new
             {
-                Title = title,
-                Body = body,
-                Type = type.ToString(),
-                RelatedEntityId = relatedEntityId,
-                CreatedAt = DateTime.UtcNow
+                notification.Id,
+                notification.Title,
+                notification.Body,
+                Type = notification.Type.ToString(),
+                notification.RelatedEntityId,
+                notification.ActionUrl,
+                notification.CreatedAt
             }, ct);
         }
     }

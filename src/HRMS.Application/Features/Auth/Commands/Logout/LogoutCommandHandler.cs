@@ -25,6 +25,6 @@ public class LogoutCommandHandler(
         refreshTokenRepo.Update(stored);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result.Success();
+        return Result.Success(204);
     }
 }

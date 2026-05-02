@@ -43,7 +43,7 @@ public class RefreshTokenCommandHandler(
         {
             UserId = stored.UserId,
             TokenHash = newHash,
-            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            ExpiresAt = DateTime.UtcNow.AddDays(tokenService.RefreshTokenExpiryDays),
             CreatedAt = DateTime.UtcNow,
             CreatedByIp = request.IpAddress
         };
@@ -57,6 +57,6 @@ public class RefreshTokenCommandHandler(
         return Result<LoginResponse>.Success(new LoginResponse(
             accessToken,
             rawNewRefresh,
-            DateTime.UtcNow.AddMinutes(15)));
+            DateTime.UtcNow.AddMinutes(tokenService.AccessTokenExpiryMinutes)));
     }
 }
