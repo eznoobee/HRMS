@@ -22,7 +22,7 @@ public class RegisterCommandHandler(
     {
         var isHRManager = currentUser.Role is UserRole.HRManager or UserRole.GeneralManager;
         var isHRWithPermission = currentUser.Role == UserRole.HR &&
-                                 currentUser.Permissions.HasFlag(HRPermission.RegisterEmployees);
+                                 currentUser.HasPermission(HRPermission.RegisterEmployees);
 
         if (!isHRManager && !isHRWithPermission)
             throw new ForbiddenException("You do not have permission to register employees.");

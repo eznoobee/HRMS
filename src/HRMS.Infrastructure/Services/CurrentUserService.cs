@@ -5,6 +5,7 @@ using HRMS.Domain.Interfaces.Services;
 using HRMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Infrastructure.Services;
 
@@ -30,7 +31,8 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, Applic
     public Guid EmployeeId => GetEmployee()?.Id ?? Guid.Empty;
     public Guid CompanyId => GetEmployee()?.CompanyId ?? Guid.Empty;
     public Guid DepartmentId => GetEmployee()?.DepartmentId ?? Guid.Empty;
-    public HRPermission Permissions => GetEmployee()?.Permissions ?? HRPermission.None;
+    public bool HasPermission(HRPermission permission) =>
+        GetEmployee()?.GrantedPermissions.Any(p => p.Permission == permission) == true;
 
     private Employee? GetEmployee()
     {
@@ -41,6 +43,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, Applic
             return cached as Employee;
 
         var employee = context.Employees
+            .Include(e => e.GrantedPermissions)
             .AsNoTracking()
             .FirstOrDefault(e => e.UserId == UserId && !e.IsDeleted);
 

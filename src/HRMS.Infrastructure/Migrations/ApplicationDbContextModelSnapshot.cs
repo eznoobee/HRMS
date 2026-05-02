@@ -310,6 +310,33 @@ namespace HRMS.Infrastructure.Migrations
                     b.ToTable("DirectMessages");
                 });
 
+            modelBuilder.Entity("HRMS.Domain.Entities.EmployeePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Permission")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("GrantedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("GrantedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "EmployeeId", "Permission" })
+                        .IsUnique();
+
+                    b.ToTable("EmployeePermissions");
+                });
+
             modelBuilder.Entity("HRMS.Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -374,9 +401,6 @@ namespace HRMS.Infrastructure.Migrations
 
                     b.Property<DateOnly>("JoinDate")
                         .HasColumnType("date");
-
-                    b.Property<int>("Permissions")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
@@ -967,6 +991,15 @@ namespace HRMS.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("HRMS.Domain.Entities.EmployeePermission", b =>
+                {
+                    b.HasOne("HRMS.Domain.Entities.Employee", "Employee")
+                        .WithMany("GrantedPermissions")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HRMS.Domain.Entities.Announcement", b =>

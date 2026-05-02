@@ -26,7 +26,6 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasMaxLength(256);
         builder.Property(e => e.JobTitle).HasMaxLength(150);
         builder.Property(e => e.Role).HasConversion<string>();
-        builder.Property(e => e.Permissions).HasConversion<int>().HasDefaultValue(HRPermission.None);
 
         var phoneConverter = new ValueConverter<PhoneNumber?, string?>(
             v => v != null ? v.Value : null,

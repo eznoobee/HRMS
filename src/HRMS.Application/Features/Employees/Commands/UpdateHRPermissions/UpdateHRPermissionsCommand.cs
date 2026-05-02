@@ -4,4 +4,4 @@ using MediatR;
 
 namespace HRMS.Application.Features.Employees.Commands.UpdateHRPermissions;
 
-public record UpdateHRPermissionsCommand(Guid EmployeeId, HRPermission Permissions) : IRequest<Result>;
+public record UpdateHRPermissionsCommand(Guid EmployeeId, IReadOnlyList<HRPermission> Permissions) : IRequest<Result>;

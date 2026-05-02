@@ -18,7 +18,6 @@ public class Employee : AuditableEntity
     public DateOnly JoinDate { get; set; }
     public string? JobTitle { get; set; }
     public UserRole Role { get; set; }
-    public HRPermission Permissions { get; set; } = HRPermission.None;
     public bool IsActive { get; set; } = true;
 
     public Guid CompanyId { get; set; }
@@ -29,6 +28,7 @@ public class Employee : AuditableEntity
 
     public string UserId { get; set; } = default!;
 
+    public ICollection<EmployeePermission> GrantedPermissions { get; set; } = [];
     public ICollection<LeaveRequest> LeaveRequests { get; set; } = [];
     public ICollection<OvertimeRequest> OvertimeRequests { get; set; } = [];
     public ICollection<LeaveBalance> LeaveBalances { get; set; } = [];

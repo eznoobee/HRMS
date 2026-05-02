@@ -77,7 +77,7 @@ public class EmployeesController : BaseApiController
         Guid id, [FromBody] UpdatePermissionsRequest request, CancellationToken ct) =>
         ToResponse(await Sender.Send(new UpdateHRPermissionsCommand(id, request.Permissions), ct));
 
-    public record UpdatePermissionsRequest(HRPermission Permissions);
+    public record UpdatePermissionsRequest(IReadOnlyList<HRPermission> Permissions);
 
     public record UpdateEmployeeRequest(
         string FirstName,

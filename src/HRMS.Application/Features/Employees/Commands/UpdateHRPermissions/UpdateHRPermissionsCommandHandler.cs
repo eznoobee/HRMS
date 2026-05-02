@@ -10,6 +10,7 @@ namespace HRMS.Application.Features.Employees.Commands.UpdateHRPermissions;
 
 public class UpdateHRPermissionsCommandHandler(
     IRepository<Employee> employeeRepo,
+    IRepository<EmployeePermission> permissionRepo,
     ICurrentUserService currentUser,
     IUnitOfWork unitOfWork) : IRequestHandler<UpdateHRPermissionsCommand, Result>
 {
@@ -28,13 +29,22 @@ public class UpdateHRPermissionsCommandHandler(
         if (target.Role != UserRole.HR)
             return Result.Failure("Permissions can only be assigned to HR employees.");
 
-        target.Permissions = request.Permissions;
-        target.UpdatedAt = DateTime.UtcNow;
-        target.UpdatedBy = currentUser.EmployeeId;
+        var existing = await permissionRepo.FindAsync(p => p.EmployeeId == request.EmployeeId, ct);
+        foreach (var p in existing)
+            permissionRepo.Remove(p);
 
-        employeeRepo.Update(target);
+        foreach (var permission in request.Permissions.Distinct())
+        {
+            await permissionRepo.AddAsync(new EmployeePermission
+            {
+                EmployeeId = request.EmployeeId,
+                Permission = permission,
+                GrantedBy = currentUser.EmployeeId,
+                GrantedAt = DateTime.UtcNow
+            }, ct);
+        }
+
         await unitOfWork.SaveChangesAsync(ct);
-
         return Result.Success();
     }
 }

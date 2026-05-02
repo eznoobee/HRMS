@@ -10,6 +10,6 @@ public interface ICurrentUserService
     Guid EmployeeId { get; }
     Guid CompanyId { get; }
     Guid DepartmentId { get; }
-    HRPermission Permissions { get; }
+    bool HasPermission(HRPermission permission);
     bool IsAuthenticated { get; }
 }
