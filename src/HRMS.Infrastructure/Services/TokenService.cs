@@ -15,6 +15,10 @@ public class TokenService(IConfiguration configuration) : ITokenService
     private readonly string _issuer = configuration["Jwt:Issuer"] ?? "HRMS";
     private readonly string _audience = configuration["Jwt:Audience"] ?? "HRMS";
     private readonly int _expiryMinutes = int.Parse(configuration["Jwt:ExpiryMinutes"] ?? "60");
+    private readonly int _refreshTokenExpiryDays = int.Parse(configuration["Jwt:RefreshTokenExpiryDays"] ?? "7");
+
+    public int AccessTokenExpiryMinutes => _expiryMinutes;
+    public int RefreshTokenExpiryDays => _refreshTokenExpiryDays;
 
     public string GenerateAccessToken(string userId, string email, string role)
     {
@@ -49,29 +53,5 @@ public class TokenService(IConfiguration configuration) : ITokenService
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
         return Convert.ToBase64String(bytes);
-    }
-
-    public string? GetUserIdFromExpiredToken(string token)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
-        var validationParams = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = key,
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false
-        };
-
-        try
-        {
-            var principal = new JwtSecurityTokenHandler()
-                .ValidateToken(token, validationParams, out _);
-            return principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        }
-        catch
-        {
-            return null;
-        }
     }
 }

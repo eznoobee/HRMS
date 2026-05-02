@@ -5,7 +5,6 @@ using HRMS.Domain.Interfaces.Services;
 using HRMS.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace HRMS.Infrastructure.Services;
 
@@ -45,7 +44,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, Applic
         var employee = context.Employees
             .Include(e => e.GrantedPermissions)
             .AsNoTracking()
-            .FirstOrDefault(e => e.UserId == UserId && !e.IsDeleted);
+            .FirstOrDefault(e => e.UserId == UserId);
 
         httpContext.Items[CacheKey] = employee;
         return employee;

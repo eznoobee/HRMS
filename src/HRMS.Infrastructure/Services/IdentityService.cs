@@ -32,7 +32,4 @@ public class IdentityService(UserManager<IdentityUser> userManager, SignInManage
 
         return (user.Id, null);
     }
-
-    public async Task<bool> UserExistsAsync(string email) =>
-        await userManager.FindByEmailAsync(email) is not null;
 }

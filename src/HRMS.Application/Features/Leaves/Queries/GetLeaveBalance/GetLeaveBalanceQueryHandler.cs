@@ -1,6 +1,8 @@
+using HRMS.Application.Common.Exceptions;
 using HRMS.Application.Common.Models;
 using HRMS.Application.DTOs;
 using HRMS.Domain.Entities;
+using HRMS.Domain.Enums;
 using HRMS.Domain.Interfaces.Repositories;
 using HRMS.Domain.Interfaces.Services;
 using Mapster;
@@ -11,10 +13,25 @@ namespace HRMS.Application.Features.Leaves.Queries.GetLeaveBalance;
 
 public class GetLeaveBalanceQueryHandler(
     IRepository<LeaveBalance> leaveBalanceRepo,
+    IRepository<Employee> employeeRepo,
     ICurrentUserService currentUser) : IRequestHandler<GetLeaveBalanceQuery, Result<IReadOnlyList<LeaveBalanceDto>>>
 {
     public async Task<Result<IReadOnlyList<LeaveBalanceDto>>> Handle(GetLeaveBalanceQuery request, CancellationToken ct)
     {
+        var isHR = currentUser.Role is UserRole.HR or UserRole.HRManager or UserRole.GeneralManager;
+        var isManager = currentUser.Role == UserRole.Manager;
+
+        if (request.EmployeeId.HasValue && request.EmployeeId.Value != currentUser.EmployeeId)
+        {
+            if (!isHR && !isManager)
+                throw new ForbiddenException("You cannot view another employee's leave balance.");
+
+            var targetInSameCompany = await employeeRepo.ExistsAsync(
+                e => e.Id == request.EmployeeId.Value && e.CompanyId == currentUser.CompanyId, ct);
+            if (!targetInSameCompany)
+                throw new ForbiddenException("You cannot view employees from another company.");
+        }
+
         var targetEmployeeId = request.EmployeeId ?? currentUser.EmployeeId;
         var year = request.Year ?? DateTime.UtcNow.Year;
 

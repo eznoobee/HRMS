@@ -16,6 +16,5 @@ public record RegisterCommand(
     DateOnly JoinDate,
     string? JobTitle,
     UserRole Role,
-    Guid CompanyId,
     Guid DepartmentId
 ) : IRequest<Result>;

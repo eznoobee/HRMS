@@ -1,6 +1,7 @@
 using HRMS.Application.Common.Models;
 using HRMS.Application.DTOs;
 using HRMS.Domain.Entities;
+using HRMS.Domain.Enums;
 using HRMS.Domain.Interfaces.Repositories;
 using HRMS.Domain.Interfaces.Services;
 using Mapster;
@@ -20,7 +21,9 @@ public class GetAnnouncementsQueryHandler(
             .Include(a => a.Author)
             .Include(a => a.Department)
             .Where(a => a.CompanyId == currentUser.CompanyId)
-            .Where(a => a.ExpiresAt == null || a.ExpiresAt > now);
+            .Where(a => a.ExpiresAt == null || a.ExpiresAt > now)
+            .Where(a => a.Scope == AnnouncementScope.Company ||
+                        a.DepartmentId == currentUser.DepartmentId);
 
         var totalCount = await query.CountAsync(ct);
         var items = await query

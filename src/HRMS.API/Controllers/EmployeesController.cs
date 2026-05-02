@@ -7,7 +7,6 @@ using HRMS.Application.Features.Employees.Commands.UpdateHRPermissions;
 using HRMS.Domain.Enums;
 using HRMS.Application.Features.Employees.Queries.GetEmployee;
 using HRMS.Application.Features.Employees.Queries.GetEmployees;
-using HRMS.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

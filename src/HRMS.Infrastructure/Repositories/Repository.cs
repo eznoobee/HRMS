@@ -13,9 +13,6 @@ public class Repository<T>(ApplicationDbContext context) : IRepository<T> where 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await _set.FindAsync([id], ct);
 
-    public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken ct = default) =>
-        await _set.ToListAsync(ct);
-
     public async Task<IReadOnlyList<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default) =>
         await _set.Where(predicate).ToListAsync(ct);
 

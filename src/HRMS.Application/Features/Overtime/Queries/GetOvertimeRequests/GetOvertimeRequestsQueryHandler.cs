@@ -23,8 +23,7 @@ public class GetOvertimeRequestsQueryHandler(
         var query = overtimeRepo.Query()
             .Include(o => o.Employee)
             .Include(o => o.ManagerReviewer)
-            .Include(o => o.HRReviewer)
-            .Where(o => !o.IsDeleted);
+            .Include(o => o.HRReviewer);
 
         if (isHR)
         {
@@ -42,7 +41,7 @@ public class GetOvertimeRequestsQueryHandler(
             query = query.Where(o => o.EmployeeId == currentUser.EmployeeId);
         }
 
-        if (request.EmployeeId.HasValue)
+        if (request.EmployeeId.HasValue && (isHR || isManager))
             query = query.Where(o => o.EmployeeId == request.EmployeeId);
 
         if (!string.IsNullOrWhiteSpace(request.Status) &&
