@@ -19,5 +19,3 @@ public record UpdateEmployeeCommand(
     Guid DepartmentId,
     bool IsActive
 ) : IRequest<Result<UpdateEmployeeResponse>>;
-
-public record UpdateEmployeeResponse(Guid EmployeeId, string FullName);
