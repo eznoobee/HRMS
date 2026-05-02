@@ -13,7 +13,6 @@ namespace HRMS.Application.Features.Auth.Commands.Register;
 public class RegisterCommandHandler(
     IIdentityService identityService,
     IRepository<Employee> employeeRepo,
-    IRepository<Company> companyRepo,
     IRepository<Department> departmentRepo,
     ICurrentUserService currentUser,
     IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand, Result>
@@ -30,14 +29,11 @@ public class RegisterCommandHandler(
         if (!isHRManager && request.Role is UserRole.HRManager or UserRole.GeneralManager)
             throw new ForbiddenException("You cannot register HR managers or general managers.");
 
-        var company = await companyRepo.GetByIdAsync(request.CompanyId, ct)
-            ?? throw new NotFoundException(nameof(Company), request.CompanyId);
-
         var department = await departmentRepo.GetByIdAsync(request.DepartmentId, ct)
             ?? throw new NotFoundException(nameof(Department), request.DepartmentId);
 
-        if (department.CompanyId != company.Id)
-            return Result.Failure("Department does not belong to this company.");
+        if (department.CompanyId != currentUser.CompanyId)
+            return Result.Failure("Department does not belong to your company.");
 
         var emailExists = await employeeRepo.ExistsAsync(e => e.Email.Value == request.Email.ToLowerInvariant(), ct);
         if (emailExists)
@@ -59,7 +55,7 @@ public class RegisterCommandHandler(
             JoinDate = request.JoinDate,
             JobTitle = request.JobTitle,
             Role = request.Role,
-            CompanyId = request.CompanyId,
+            CompanyId = currentUser.CompanyId,
             DepartmentId = request.DepartmentId,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,

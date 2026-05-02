@@ -20,7 +20,6 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .Must(PhoneNumber.IsValid)
             .WithMessage("Phone must be a valid number (e.g., 07XXXXXXXXX or +964XXXXXXXXX).")
             .When(x => x.Phone is not null);
-        RuleFor(x => x.CompanyId).NotEmpty();
         RuleFor(x => x.DepartmentId).NotEmpty();
         RuleFor(x => x.DateOfBirth).NotEmpty();
         RuleFor(x => x.JoinDate).NotEmpty();

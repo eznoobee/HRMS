@@ -13,6 +13,7 @@ namespace HRMS.Application.Features.Leaves.Queries.GetLeaveBalance;
 
 public class GetLeaveBalanceQueryHandler(
     IRepository<LeaveBalance> leaveBalanceRepo,
+    IRepository<Employee> employeeRepo,
     ICurrentUserService currentUser) : IRequestHandler<GetLeaveBalanceQuery, Result<IReadOnlyList<LeaveBalanceDto>>>
 {
     public async Task<Result<IReadOnlyList<LeaveBalanceDto>>> Handle(GetLeaveBalanceQuery request, CancellationToken ct)
@@ -24,6 +25,11 @@ public class GetLeaveBalanceQueryHandler(
         {
             if (!isHR && !isManager)
                 throw new ForbiddenException("You cannot view another employee's leave balance.");
+
+            var targetInSameCompany = await employeeRepo.ExistsAsync(
+                e => e.Id == request.EmployeeId.Value && e.CompanyId == currentUser.CompanyId, ct);
+            if (!targetInSameCompany)
+                throw new ForbiddenException("You cannot view employees from another company.");
         }
 
         var targetEmployeeId = request.EmployeeId ?? currentUser.EmployeeId;

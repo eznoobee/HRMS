@@ -37,6 +37,18 @@ public class ApplyLeaveCommandHandler(
         if (balance is null || balance.RemainingDays < totalDays)
             return Result<ApplyLeaveResponse>.Failure($"Insufficient leave balance. Remaining: {balance?.RemainingDays ?? 0} days.");
 
+        var hasOverlap = await leaveRequestRepo.ExistsAsync(
+            lr => lr.EmployeeId == employee.Id
+                && lr.Status != LeaveStatus.ManagerRejected
+                && lr.Status != LeaveStatus.HRRejected
+                && lr.Status != LeaveStatus.Cancelled
+                && lr.StartDate <= request.EndDate
+                && lr.EndDate >= request.StartDate,
+            ct);
+
+        if (hasOverlap)
+            return Result<ApplyLeaveResponse>.Failure("You already have an active leave request overlapping this period.");
+
         var isManager = employee.Role == UserRole.Manager ||
                         employee.Role == UserRole.HRManager ||
                         employee.Role == UserRole.HR ||
