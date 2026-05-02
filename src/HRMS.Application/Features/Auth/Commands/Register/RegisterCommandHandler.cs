@@ -16,9 +16,9 @@ public class RegisterCommandHandler(
     IRepository<Company> companyRepo,
     IRepository<Department> departmentRepo,
     ICurrentUserService currentUser,
-    IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand, Result<RegisterResponse>>
+    IUnitOfWork unitOfWork) : IRequestHandler<RegisterCommand, Result>
 {
-    public async Task<Result<RegisterResponse>> Handle(RegisterCommand request, CancellationToken ct)
+    public async Task<Result> Handle(RegisterCommand request, CancellationToken ct)
     {
         if (currentUser.Role == UserRole.HRManager && request.Role == UserRole.GeneralManager)
             throw new ForbiddenException("HRManagers cannot register a GeneralManager.");
@@ -30,15 +30,15 @@ public class RegisterCommandHandler(
             ?? throw new NotFoundException(nameof(Department), request.DepartmentId);
 
         if (department.CompanyId != company.Id)
-            return Result<RegisterResponse>.Failure("Department does not belong to this company.");
+            return Result.Failure("Department does not belong to this company.");
 
         var emailExists = await employeeRepo.ExistsAsync(e => e.Email.Value == request.Email.ToLowerInvariant(), ct);
         if (emailExists)
-            return Result<RegisterResponse>.Failure("An account with this email already exists.");
+            return Result.Failure("An account with this email already exists.");
 
         var (userId, error) = await identityService.CreateUserAsync(request.Email, request.Password, request.Role.ToString());
         if (error is not null)
-            return Result<RegisterResponse>.Failure(error);
+            return Result.Failure(error);
 
         var employee = new Employee
         {
@@ -62,11 +62,6 @@ public class RegisterCommandHandler(
         await employeeRepo.AddAsync(employee, ct);
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result<RegisterResponse>.Success(
-            new RegisterResponse(
-                employee.Id,
-                employee.Email.Value,
-                $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"),
-            201);
+        return Result.Success(201);
     }
 }

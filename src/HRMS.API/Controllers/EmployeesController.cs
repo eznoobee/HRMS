@@ -33,7 +33,7 @@ public class EmployeesController : BaseApiController
         ToResponse(await Sender.Send(new GetEmployeeQuery(id), ct));
 
     [HttpPost]
-    [ProducesResponseType(typeof(CreateEmployeeResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand command, CancellationToken ct) =>

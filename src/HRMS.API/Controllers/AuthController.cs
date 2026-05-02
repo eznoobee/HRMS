@@ -15,7 +15,7 @@ public class AuthController : BaseApiController
 
     [Authorize(Roles = "GeneralManager,HRManager")]
     [HttpPost("register")]
-    [ProducesResponseType(typeof(RegisterResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken ct) =>
         ToResponse(await Sender.Send(command, ct));
 

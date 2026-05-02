@@ -17,6 +17,4 @@ public record CreateEmployeeCommand(
     string? JobTitle,
     UserRole Role,
     Guid DepartmentId
-) : IRequest<Result<CreateEmployeeResponse>>;
-
-public record CreateEmployeeResponse(Guid EmployeeId, string Email, string FullName);
+) : IRequest<Result>;

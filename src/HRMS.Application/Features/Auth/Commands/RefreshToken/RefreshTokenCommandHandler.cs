@@ -57,10 +57,6 @@ public class RefreshTokenCommandHandler(
         return Result<LoginResponse>.Success(new LoginResponse(
             accessToken,
             rawNewRefresh,
-            DateTime.UtcNow.AddMinutes(15),
-            employee.Id,
-            $"{employee.FirstName} {employee.FamilyName}",
-            employee.Email.Value,
-            employee.Role.ToString()));
+            DateTime.UtcNow.AddMinutes(15)));
     }
 }

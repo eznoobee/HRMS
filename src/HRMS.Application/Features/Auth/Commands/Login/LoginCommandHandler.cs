@@ -45,10 +45,6 @@ public class LoginCommandHandler(
         return Result<LoginResponse>.Success(new LoginResponse(
             accessToken,
             rawRefreshToken,
-            DateTime.UtcNow.AddMinutes(15),
-            employee.Id,
-            $"{employee.FirstName} {employee.FamilyName}",
-            employee.Email.Value,
-            employee.Role.ToString()));
+            DateTime.UtcNow.AddMinutes(15)));
     }
 }
