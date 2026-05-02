@@ -18,6 +18,7 @@ public class Employee : AuditableEntity
     public DateOnly JoinDate { get; set; }
     public string? JobTitle { get; set; }
     public UserRole Role { get; set; }
+    public HRPermission Permissions { get; set; } = HRPermission.None;
     public bool IsActive { get; set; } = true;
 
     public Guid CompanyId { get; set; }

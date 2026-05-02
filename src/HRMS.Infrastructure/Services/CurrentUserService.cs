@@ -30,6 +30,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, Applic
     public Guid EmployeeId => GetEmployee()?.Id ?? Guid.Empty;
     public Guid CompanyId => GetEmployee()?.CompanyId ?? Guid.Empty;
     public Guid DepartmentId => GetEmployee()?.DepartmentId ?? Guid.Empty;
+    public HRPermission Permissions => GetEmployee()?.Permissions ?? HRPermission.None;
 
     private Employee? GetEmployee()
     {

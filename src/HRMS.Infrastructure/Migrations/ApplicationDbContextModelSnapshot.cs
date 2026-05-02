@@ -375,6 +375,9 @@ namespace HRMS.Infrastructure.Migrations
                     b.Property<DateOnly>("JoinDate")
                         .HasColumnType("date");
 
+                    b.Property<int>("Permissions")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");

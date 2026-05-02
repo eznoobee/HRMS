@@ -20,8 +20,15 @@ public class RegisterCommandHandler(
 {
     public async Task<Result> Handle(RegisterCommand request, CancellationToken ct)
     {
-        if (currentUser.Role == UserRole.HRManager && request.Role == UserRole.GeneralManager)
-            throw new ForbiddenException("HRManagers cannot register a GeneralManager.");
+        var isHRManager = currentUser.Role is UserRole.HRManager or UserRole.GeneralManager;
+        var isHRWithPermission = currentUser.Role == UserRole.HR &&
+                                 currentUser.Permissions.HasFlag(HRPermission.RegisterEmployees);
+
+        if (!isHRManager && !isHRWithPermission)
+            throw new ForbiddenException("You do not have permission to register employees.");
+
+        if (!isHRManager && request.Role is UserRole.HRManager or UserRole.GeneralManager)
+            throw new ForbiddenException("You cannot register HR managers or general managers.");
 
         var company = await companyRepo.GetByIdAsync(request.CompanyId, ct)
             ?? throw new NotFoundException(nameof(Company), request.CompanyId);

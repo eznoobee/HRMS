@@ -13,7 +13,7 @@ public class AuthController : BaseApiController
     private string? ClientIp =>
         HttpContext.Connection.RemoteIpAddress?.ToString();
 
-    [Authorize(Roles = "GeneralManager,HRManager")]
+    [Authorize]
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken ct) =>
