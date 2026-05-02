@@ -32,7 +32,7 @@ public class RegisterCommandHandler(
         if (department.CompanyId != company.Id)
             return Result<RegisterResponse>.Failure("Department does not belong to this company.");
 
-        var emailExists = await employeeRepo.ExistsAsync(e => e.Email == request.Email, ct);
+        var emailExists = await employeeRepo.ExistsAsync(e => e.Email.Value == request.Email.ToLowerInvariant(), ct);
         if (emailExists)
             return Result<RegisterResponse>.Failure("An account with this email already exists.");
 
@@ -46,7 +46,7 @@ public class RegisterCommandHandler(
             FatherName = request.FatherName,
             GrandfatherName = request.GrandfatherName,
             FamilyName = request.FamilyName,
-            Email = request.Email,
+            Email = Email.Create(request.Email),
             Phone = PhoneNumber.TryCreate(request.Phone),
             DateOfBirth = request.DateOfBirth,
             JoinDate = request.JoinDate,
@@ -65,7 +65,7 @@ public class RegisterCommandHandler(
         return Result<RegisterResponse>.Success(
             new RegisterResponse(
                 employee.Id,
-                employee.Email,
+                employee.Email.Value,
                 $"{employee.FirstName} {employee.FatherName} {employee.GrandfatherName} {employee.FamilyName}"),
             201);
     }

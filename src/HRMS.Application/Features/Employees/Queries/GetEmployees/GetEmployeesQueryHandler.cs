@@ -39,7 +39,7 @@ public class GetEmployeesQueryHandler(
             query = query.Where(e =>
                 e.FirstName.ToLower().Contains(search) ||
                 e.FamilyName.ToLower().Contains(search) ||
-                e.Email.ToLower().Contains(search));
+                e.Email.Value.ToLower().Contains(search));
         }
 
         var totalCount = await query.CountAsync(ct);

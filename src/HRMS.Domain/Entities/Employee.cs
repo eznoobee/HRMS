@@ -2,6 +2,7 @@ using HRMS.Domain.Entities.Common;
 using HRMS.Domain.Enums;
 using HRMS.Domain.ValueObjects;
 
+
 namespace HRMS.Domain.Entities;
 
 public class Employee : AuditableEntity
@@ -10,7 +11,7 @@ public class Employee : AuditableEntity
     public string FatherName { get; set; } = default!;
     public string GrandfatherName { get; set; } = default!;
     public string FamilyName { get; set; } = default!;
-    public string Email { get; set; } = default!;
+    public Email Email { get; set; } = default!;
     public PhoneNumber? Phone { get; set; }
     public string? AvatarUrl { get; set; }
     public DateOnly DateOfBirth { get; set; }

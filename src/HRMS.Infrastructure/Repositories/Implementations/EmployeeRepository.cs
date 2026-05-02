@@ -34,5 +34,5 @@ public class EmployeeRepository(ApplicationDbContext context)
             .ToListAsync(ct);
 
     public async Task<bool> EmailExistsAsync(string email, CancellationToken ct = default) =>
-        await context.Employees.AnyAsync(e => e.Email == email, ct);
+        await context.Employees.AnyAsync(e => e.Email.Value == email.ToLowerInvariant(), ct);
 }

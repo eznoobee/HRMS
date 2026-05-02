@@ -16,7 +16,14 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.Property(e => e.FatherName).IsRequired().HasMaxLength(100);
         builder.Property(e => e.GrandfatherName).IsRequired().HasMaxLength(100);
         builder.Property(e => e.FamilyName).IsRequired().HasMaxLength(100);
-        builder.Property(e => e.Email).IsRequired().HasMaxLength(256);
+        var emailConverter = new ValueConverter<Email, string>(
+            v => v.Value,
+            v => Email.Create(v));
+
+        builder.Property(e => e.Email)
+            .HasConversion(emailConverter)
+            .IsRequired()
+            .HasMaxLength(256);
         builder.Property(e => e.JobTitle).HasMaxLength(150);
         builder.Property(e => e.Role).HasConversion<string>();
 

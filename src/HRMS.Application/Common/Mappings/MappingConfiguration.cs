@@ -38,7 +38,7 @@ public static class MappingConfiguration
             .Map(dest => dest.GrandfatherName, src => src.GrandfatherName)
             .Map(dest => dest.FamilyName, src => src.FamilyName)
             .Map(dest => dest.FullName, src => FullName(src))
-            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.Email, src => src.Email.Value)
             .Map(dest => dest.Phone, src => src.Phone != null ? src.Phone.Value : null)
             .Map(dest => dest.AvatarUrl, src => src.AvatarUrl)
             .Map(dest => dest.DateOfBirth, src => src.DateOfBirth)
