@@ -30,7 +30,7 @@ public class GetLeaveRequestsQueryHandler(
         if (!isHR && !isManager)
             query = query.Where(lr => lr.EmployeeId == currentUser.EmployeeId);
         else if (isManager && !isHR)
-            query = query.Where(lr => lr.Employee.DepartmentId == currentUser.EmployeeId);
+            query = query.Where(lr => lr.Employee.DepartmentId == currentUser.DepartmentId);
 
         if (request.EmployeeId.HasValue && (isHR || isManager))
             query = query.Where(lr => lr.EmployeeId == request.EmployeeId);

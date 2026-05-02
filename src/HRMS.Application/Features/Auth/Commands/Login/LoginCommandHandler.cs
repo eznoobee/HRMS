@@ -47,7 +47,7 @@ public class LoginCommandHandler(
             rawRefreshToken,
             DateTime.UtcNow.AddMinutes(15),
             employee.Id,
-            $"{employee.FirstName} {employee.LastName}",
+            $"{employee.FirstName} {employee.FamilyName}",
             employee.Email,
             employee.Role.ToString()));
     }
